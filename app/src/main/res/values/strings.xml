@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Nmedia</string>
+    <string name="date">03 January, 17:46</string>
+    <string name="author" translatable="false">Нетология. Университет интернет-профессий будущего</string>
+    <string name="post_content_text" translatable="false">Привет, это новая Нетология! Когда-то Нетология начиналась с интенсивов по онлайн-маркетингу. Затем появились курсы по дизайну, разработке, аналитике и управлению. Мы растём сами и помогаем расти студентам: от новичков до уверенных профессионалов. Но самое важное остаётся с нами: мы верим, что в каждом уже есть сила, которая заставляет хотеть больше, целиться выше, бежать быстрее. Наша миссия — помочь встать на путь роста и начать цепочку перемен → http://netolo.gy/fyb</string>
+    <string name="likesCount" translatable="false">999</string>
+    <string name="shareCount" translatable="false">9997</string>
+    <string name="viewsCount" translatable="false">1000</string>
+    <string name="menu_remove">Remove</string>
+    <string name="post_text">Post text</string>
+    <string name="description_post_like"> Like</string>
+    <string name="empty_notificaton">Content can\'t be empty</string>
+    <string name="menu_edit"> Edit</string>
+    <string name="editing_post">Editing Post</string>
+    <string name="author_logo">Author logo</string>
+    <string name="views" translatable="false">Views</string>
+    <string name="chooser_share_post">Share post</string>
+    <string name="add_post" translatable="false">Add post</string>
+    <string name="video" translatable="false">Video</string>
+    <string name="play" translatable="false">Play</string>
+    <string name="notification_user_liked" translatable="false">User %1$s liked %2$s\'s post</string>
+    <string name="notification_new_post" translatable="false">%1$s made new post</string>
+    <string name="channel_remote_name" translatable="false">Server notifications</string>
+    <string name="channel_remote_description" translatable="false">Notifications from remote server</string>
+</resources>
