@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.swiperefreshlayout)
 
     implementation(libs.androidx.room)
     ksp(libs.androidx.room.compiler)

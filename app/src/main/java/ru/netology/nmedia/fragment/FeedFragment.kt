@@ -93,6 +93,7 @@ class FeedFragment : Fragment() {
             binding.errorGroup.isVisible = state.error
             binding.progress.isVisible = state.loading
             binding.empty.isVisible = state.empty
+            binding.swipeRefresh.isRefreshing = false
         }
     }
 
@@ -111,6 +112,10 @@ class FeedFragment : Fragment() {
     private fun setupListeners() {
         binding.add.setOnClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_newPostActivity)
+        }
+
+        binding.swipeRefresh.setOnRefreshListener {
+            viewModel.load()
         }
     }
 }
