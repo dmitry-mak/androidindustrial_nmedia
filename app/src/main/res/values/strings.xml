@@ -22,4 +22,7 @@
     <string name="notification_new_post" translatable="false">%1$s made new post</string>
     <string name="channel_remote_name" translatable="false">Server notifications</string>
     <string name="channel_remote_description" translatable="false">Notifications from remote server</string>
+    <string name="network_error">Network error</string>
+    <string name="retry">Retry</string>
+    <string name="no_posts">No posts yet</string>
 </resources>

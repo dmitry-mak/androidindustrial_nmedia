@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -67,7 +68,7 @@ class FeedFragment : Fragment() {
 
             }
 
-            override fun onOpen (post: Post){
+            override fun onOpen(post: Post) {
                 findNavController().navigate(
                     R.id.action_feedFragment_to_singlePostFragment,
                     Bundle().apply { putLong(SinglePostFragment.POST_ID, post.id) }
@@ -75,18 +76,37 @@ class FeedFragment : Fragment() {
             }
         })
         binding.list.adapter = adapter
-    }
 
-    private fun setupObservers() {
-        viewModel.data.observe(viewLifecycleOwner) { posts ->
-            val newPost = posts.size > adapter.currentList.size
-            adapter.submitList(posts) {
-                if (newPost) {
-                    binding.list.smoothScrollToPosition(0)
-                }
-            }
+        binding.retryButton.setOnClickListener {
+            viewModel.load()
         }
     }
+
+//    private fun setupObservers() {
+//            adapter.submitList(viewModel.data) {
+//            }
+//        }
+
+    private fun setupObservers() {
+        viewModel.data.observe(viewLifecycleOwner) { state ->
+            adapter.submitList(state.posts)
+            binding.errorGroup.isVisible = state.error
+            binding.progress.isVisible = state.loading
+            binding.empty.isVisible = state.empty
+        }
+    }
+
+
+//    private fun setupObservers() {
+//        viewModel.data.observe(viewLifecycleOwner) { posts ->
+//            val newPost = posts.size > adapter.currentList.size
+//            adapter.submitList(posts) {
+//                if (newPost) {
+//                    binding.list.smoothScrollToPosition(0)
+//                }
+//            }
+//        }
+//    }
 
     private fun setupListeners() {
         binding.add.setOnClickListener {

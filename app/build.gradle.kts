@@ -26,6 +26,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            manifestPlaceholders["usesCleartextTraffic"] = false
+        }
+        debug {
+            manifestPlaceholders["usesCleartextTraffic"] = true
         }
     }
     compileOptions {
@@ -57,6 +61,8 @@ dependencies {
 
     implementation(platform (libs.firebase))
     implementation(libs.firebase.messaging)
+
+    implementation(libs.okhttp)
     implementation(libs.play.services)
     coreLibraryDesugaring(libs.desugaring)
 

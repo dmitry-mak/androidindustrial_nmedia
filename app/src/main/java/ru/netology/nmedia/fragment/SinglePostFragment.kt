@@ -34,8 +34,8 @@ class SinglePostFragment : Fragment() {
         val binding = FragmentSinglePostBinding.inflate(inflater, container, false)
         val postId = requireArguments().getLong(POST_ID)
 
-        viewModel.data.observe(viewLifecycleOwner) { posts ->
-            val post = posts.firstOrNull { it.id == postId }
+        viewModel.data.observe(viewLifecycleOwner) { state ->
+            val post = state.posts.firstOrNull { it.id == postId }
             if (post == null) {
                 findNavController().navigateUp()
                 return@observe
@@ -44,6 +44,14 @@ class SinglePostFragment : Fragment() {
         }
         return binding.root
     }
+//        val post = viewModel.data.firstOrNull { it.id == postId }
+//        if (post == null) {
+//            findNavController().navigateUp()
+//            return binding.root
+//        }
+//        bindPost(binding, post)
+//        return binding.root
+//    }
 
     private fun bindPost(binding: FragmentSinglePostBinding, post: Post) {
         val b = binding.post
@@ -104,8 +112,8 @@ class SinglePostFragment : Fragment() {
                 }
             }
             b.videoPreview.setOnClickListener { openVideo() }
-            b.videoPlay.setOnClickListener{ openVideo() }
-            b.videoContainer.setOnClickListener{ openVideo() }
+            b.videoPlay.setOnClickListener { openVideo() }
+            b.videoContainer.setOnClickListener { openVideo() }
         }
     }
 }
