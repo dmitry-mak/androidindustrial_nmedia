@@ -44,26 +44,33 @@ class PostRepositoryImpl() : PostRepository {
         return gson.fromJson(stringResponse, postType)
     }
 
-    override fun like(id: Long) {
-val post = getPostById(id)
-        val request = if(post.isLiked) {
+    override fun like(id: Long, isLiked: Boolean): Post {
+//        val post = getPostById(id)
+        val request = if (isLiked) {
             Request.Builder()
                 .delete()
                 .url("${BASE_URL}api/slow/posts/${id}/likes")
                 .build()
-        }else{
+        } else {
             Request.Builder()
                 .post("".toRequestBody())
                 .url("${BASE_URL}api/slow/posts/${id}/likes")
                 .build()
         }
-        client.newCall(request).execute().use { response ->
-            if(!response.isSuccessful) {
-            throw RuntimeException("Unexpected code ${response.code} ${response.message}")
-            }
-        }
+//        }
+//        client.newCall(request).execute().use { response ->
+//            if (!response.isSuccessful) {
+//                throw RuntimeException("Unexpected code ${response.code} ${response.message}")
+//            }
+        val response = client.newCall(request).execute()
+        val stringResponse = response.body.string()
 
+        if (!response.isSuccessful) {
+            throw RuntimeException()
+        }
+        return gson.fromJson(stringResponse, Post::class.java)
     }
+    
 
     override fun share(id: Long) {
 //        dao.share(id)
@@ -78,8 +85,8 @@ val post = getPostById(id)
                 .build()
 
         client.newCall(request).execute().use { response ->
-            if(!response.isSuccessful) {
-            throw RuntimeException("Unexpected code ${response.code} ${response.message}")
+            if (!response.isSuccessful) {
+                throw RuntimeException("Unexpected code ${response.code} ${response.message}")
             }
         }
     }

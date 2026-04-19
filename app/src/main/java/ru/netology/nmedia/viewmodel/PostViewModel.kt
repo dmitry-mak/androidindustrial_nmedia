@@ -54,20 +54,31 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun setDraftPost(text: String) {
-//        draftPost.value = text
         draftPost.postValue(text)
     }
 
     fun clearDraftPost() {
-//        draftPost.value = ""
         draftPost.postValue("")
     }
 
-    fun like(id: Long) {
+    fun like(id: Long, isLiked: Boolean) {
 //        repository.like(id)
+//        thread {
+//            repository.like(id)
+//            load()
+//        }
         thread {
-            repository.like(id)
-            load()
+            val updatedPost = repository.like(id, isLiked)
+            val currentPosts = _data.value?.posts ?: emptyList()
+            val updatedPosts = currentPosts.map { post ->
+                if (post.id == updatedPost.id) updatedPost else post
+            }
+            _data.postValue(
+                FeedModel(
+                    posts = updatedPosts,
+                    empty = updatedPosts.isEmpty()
+                )
+            )
         }
     }
 

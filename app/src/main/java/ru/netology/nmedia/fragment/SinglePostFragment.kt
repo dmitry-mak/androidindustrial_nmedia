@@ -44,14 +44,6 @@ class SinglePostFragment : Fragment() {
         }
         return binding.root
     }
-//        val post = viewModel.data.firstOrNull { it.id == postId }
-//        if (post == null) {
-//            findNavController().navigateUp()
-//            return binding.root
-//        }
-//        bindPost(binding, post)
-//        return binding.root
-//    }
 
     private fun bindPost(binding: FragmentSinglePostBinding, post: Post) {
         val b = binding.post
@@ -63,7 +55,7 @@ class SinglePostFragment : Fragment() {
         b.likeIcon.isChecked = post.isLiked
         b.likeIcon.text = DiffMethods.convertNumber(post.likesCount)
         b.likeIcon.setOnClickListener {
-            viewModel.like(post.id)
+            viewModel.like(post.id, post.isLiked)
         }
 
         b.shareIcon.text = DiffMethods.convertNumber(post.sharesCount)

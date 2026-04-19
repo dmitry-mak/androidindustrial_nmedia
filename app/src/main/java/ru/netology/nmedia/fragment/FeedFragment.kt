@@ -21,20 +21,20 @@ class FeedFragment : Fragment() {
     private lateinit var binding: FragmentFeedBinding
     private lateinit var adapter: PostAdapter
 
+    private val viewModel: PostViewModel by activityViewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentFeedBinding.inflate(layoutInflater)
-        viewModel
+//        binding = FragmentFeedBinding.inflate(layoutInflater)
+        binding = FragmentFeedBinding.inflate(inflater, container, false)
         setupAdapter()
         setupObservers()
         setupListeners()
         return binding.root
     }
-
-    private val viewModel: PostViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +44,7 @@ class FeedFragment : Fragment() {
     private fun setupAdapter() {
         adapter = PostAdapter(object : OnInteractionListener {
             override fun onLike(post: Post) {
-                viewModel.like(post.id)
+                viewModel.like(post.id, post.isLiked)
             }
 
             override fun onShare(post: Post) {
@@ -82,11 +82,6 @@ class FeedFragment : Fragment() {
         }
     }
 
-//    private fun setupObservers() {
-//            adapter.submitList(viewModel.data) {
-//            }
-//        }
-
     private fun setupObservers() {
         viewModel.data.observe(viewLifecycleOwner) { state ->
             adapter.submitList(state.posts)
@@ -96,18 +91,6 @@ class FeedFragment : Fragment() {
             binding.swipeRefresh.isRefreshing = false
         }
     }
-
-
-//    private fun setupObservers() {
-//        viewModel.data.observe(viewLifecycleOwner) { posts ->
-//            val newPost = posts.size > adapter.currentList.size
-//            adapter.submitList(posts) {
-//                if (newPost) {
-//                    binding.list.smoothScrollToPosition(0)
-//                }
-//            }
-//        }
-//    }
 
     private fun setupListeners() {
         binding.add.setOnClickListener {
