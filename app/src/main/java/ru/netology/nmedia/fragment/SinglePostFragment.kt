@@ -34,8 +34,8 @@ class SinglePostFragment : Fragment() {
         val binding = FragmentSinglePostBinding.inflate(inflater, container, false)
         val postId = requireArguments().getLong(POST_ID)
 
-        viewModel.data.observe(viewLifecycleOwner) { posts ->
-            val post = posts.firstOrNull { it.id == postId }
+        viewModel.data.observe(viewLifecycleOwner) { state ->
+            val post = state.posts.firstOrNull { it.id == postId }
             if (post == null) {
                 findNavController().navigateUp()
                 return@observe
@@ -55,7 +55,7 @@ class SinglePostFragment : Fragment() {
         b.likeIcon.isChecked = post.isLiked
         b.likeIcon.text = DiffMethods.convertNumber(post.likesCount)
         b.likeIcon.setOnClickListener {
-            viewModel.like(post.id)
+            viewModel.like(post.id, post.isLiked)
         }
 
         b.shareIcon.text = DiffMethods.convertNumber(post.sharesCount)
@@ -104,8 +104,8 @@ class SinglePostFragment : Fragment() {
                 }
             }
             b.videoPreview.setOnClickListener { openVideo() }
-            b.videoPlay.setOnClickListener{ openVideo() }
-            b.videoContainer.setOnClickListener{ openVideo() }
+            b.videoPlay.setOnClickListener { openVideo() }
+            b.videoContainer.setOnClickListener { openVideo() }
         }
     }
 }

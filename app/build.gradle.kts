@@ -26,6 +26,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            manifestPlaceholders["usesCleartextTraffic"] = false
+        }
+        debug {
+            manifestPlaceholders["usesCleartextTraffic"] = true
         }
     }
     compileOptions {
@@ -51,12 +55,15 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.swiperefreshlayout)
 
     implementation(libs.androidx.room)
     ksp(libs.androidx.room.compiler)
 
     implementation(platform (libs.firebase))
     implementation(libs.firebase.messaging)
+
+    implementation(libs.okhttp)
     implementation(libs.play.services)
     coreLibraryDesugaring(libs.desugaring)
 

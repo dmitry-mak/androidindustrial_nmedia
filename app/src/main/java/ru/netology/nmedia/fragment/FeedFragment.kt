@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -20,20 +21,20 @@ class FeedFragment : Fragment() {
     private lateinit var binding: FragmentFeedBinding
     private lateinit var adapter: PostAdapter
 
+    private val viewModel: PostViewModel by activityViewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentFeedBinding.inflate(layoutInflater)
-        viewModel
+//        binding = FragmentFeedBinding.inflate(layoutInflater)
+        binding = FragmentFeedBinding.inflate(inflater, container, false)
         setupAdapter()
         setupObservers()
         setupListeners()
         return binding.root
     }
-
-    private val viewModel: PostViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +44,7 @@ class FeedFragment : Fragment() {
     private fun setupAdapter() {
         adapter = PostAdapter(object : OnInteractionListener {
             override fun onLike(post: Post) {
-                viewModel.like(post.id)
+                viewModel.like(post.id, post.isLiked)
             }
 
             override fun onShare(post: Post) {
@@ -67,7 +68,7 @@ class FeedFragment : Fragment() {
 
             }
 
-            override fun onOpen (post: Post){
+            override fun onOpen(post: Post) {
                 findNavController().navigate(
                     R.id.action_feedFragment_to_singlePostFragment,
                     Bundle().apply { putLong(SinglePostFragment.POST_ID, post.id) }
@@ -75,22 +76,29 @@ class FeedFragment : Fragment() {
             }
         })
         binding.list.adapter = adapter
+
+        binding.retryButton.setOnClickListener {
+            viewModel.load()
+        }
     }
 
     private fun setupObservers() {
-        viewModel.data.observe(viewLifecycleOwner) { posts ->
-            val newPost = posts.size > adapter.currentList.size
-            adapter.submitList(posts) {
-                if (newPost) {
-                    binding.list.smoothScrollToPosition(0)
-                }
-            }
+        viewModel.data.observe(viewLifecycleOwner) { state ->
+            adapter.submitList(state.posts)
+            binding.errorGroup.isVisible = state.error
+            binding.progress.isVisible = state.loading
+            binding.empty.isVisible = state.empty
+            binding.swipeRefresh.isRefreshing = false
         }
     }
 
     private fun setupListeners() {
         binding.add.setOnClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_newPostActivity)
+        }
+
+        binding.swipeRefresh.setOnRefreshListener {
+            viewModel.load()
         }
     }
 }
