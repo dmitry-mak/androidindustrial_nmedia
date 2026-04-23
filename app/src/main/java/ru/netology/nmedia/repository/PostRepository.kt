@@ -4,9 +4,17 @@ import ru.netology.nmedia.dto.Post
 
 interface PostRepository {
 
-    fun getData(): List<Post>
-    fun like(id: Long, isLiked: Boolean): Post
     fun share(id: Long)
-    fun removeById(id: Long)
-    fun save(post: Post): Post
+
+    fun getAllDataAsync(callback: PostsCallback<List<Post>>)
+    fun likeAsync(id: Long, isLiked: Boolean, callback: PostsCallback<Post>)
+    fun removeByIdAsync(id: Long, callBack: PostsCallback<Unit>)
+    fun saveAsync(post: Post, callback: PostsCallback<Post>)
+    fun shareAsync(id: Long, callBack: PostsCallback<Unit>)
+
+
+    interface PostsCallback <T>{
+        fun onSuccess(result: T)
+        fun onError(error: Throwable)
+    }
 }

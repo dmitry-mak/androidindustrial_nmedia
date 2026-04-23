@@ -8,8 +8,6 @@ import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
-import java.io.IOException
-import kotlin.concurrent.thread
 
 private val empty = Post(
     id = 0,
@@ -39,18 +37,16 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun load() {
-        thread {
-            _data.postValue(FeedModel(loading = true))
+        _data.postValue(FeedModel(loading = true))
+        repository.getAllDataAsync(object : PostRepository.PostsCallback<List<Post>> {
+            override fun onSuccess(posts: List<Post>) {
+                _data.postValue(FeedModel(posts = posts, empty = posts.isEmpty()))
+            }
 
-            _data.postValue(
-                try {
-                    val posts: List<Post> = repository.getData()
-                    FeedModel(posts = posts, empty = posts.isEmpty())
-                } catch (e: IOException) {
-                    FeedModel(error = true)
-                }
-            )
-        }
+            override fun onError(e: Throwable) {
+                _data.postValue(FeedModel(error = true))
+            }
+        })
     }
 
     fun setDraftPost(text: String) {
@@ -62,24 +58,26 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun like(id: Long, isLiked: Boolean) {
-//        repository.like(id)
-//        thread {
-//            repository.like(id)
-//            load()
-//        }
-        thread {
-            val updatedPost = repository.like(id, isLiked)
-            val currentPosts = _data.value?.posts ?: emptyList()
-            val updatedPosts = currentPosts.map { post ->
-                if (post.id == updatedPost.id) updatedPost else post
-            }
-            _data.postValue(
-                FeedModel(
-                    posts = updatedPosts,
-                    empty = updatedPosts.isEmpty()
+        repository.likeAsync(id, isLiked, object : PostRepository.PostsCallback<Post> {
+            override fun onSuccess(post: Post) {
+//                val updatedPost = repository.like(id, isLiked)
+                val currentPosts = _data.value?.posts ?: emptyList()
+                val updatedPosts = currentPosts.map { currentPost ->
+                    if (currentPost.id == post.id) post else currentPost
+                }
+                _data.postValue(
+                    FeedModel(
+                        posts = updatedPosts,
+                        empty = updatedPosts.isEmpty()
+                    )
                 )
-            )
-        }
+            }
+
+            override fun onError(e: Throwable) {
+                _data.postValue(FeedModel(error = true))
+            }
+
+        })
     }
 
     fun share(id: Long) {
@@ -87,22 +85,34 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun removeById(id: Long) {
-        thread {
-            repository.removeById(id)
-            load()
-        }
+        repository.removeByIdAsync(id, object : PostRepository.PostsCallback<Unit> {
+            override fun onSuccess(result: Unit) {
+                load()
+            }
+
+            override fun onError(e: Throwable) {
+                _data.postValue(FeedModel(error = true))
+            }
+        })
     }
 
-    fun save(text: String) {
-        thread {
-            edited.value?.let {
-                if (it.content != text) {
-                    repository.save(it.copy(content = text.trim()))
-                    load()
-                }
+    fun save (text: String) {
+        edited.value?.let { current ->
+            if(current.content != text) {
+                repository.saveAsync(
+                    current.copy(content = text.trim()),
+                    object: PostRepository.PostsCallback<Post>{
+                        override fun onSuccess(post: Post) {
+                            load()
+                            edited.postValue(empty)
+                            clearDraftPost()
+                        }
+                        override fun onError(e: Throwable) {
+                            _data.postValue(FeedModel(error = true))
+                        }
+                    }
+                )
             }
-            edited.postValue(empty)
-            clearDraftPost()
         }
     }
 
