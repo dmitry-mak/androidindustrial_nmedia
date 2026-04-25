@@ -9,7 +9,7 @@
 
 
     <ImageView
-        android:id="@+id/netology_logo"
+        android:id="@+id/avatar"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:contentDescription="@string/author_logo"
@@ -27,7 +27,7 @@
         android:text="@string/author"
         app:layout_constraintBottom_toTopOf="@+id/publish_day"
         app:layout_constraintEnd_toStartOf="@+id/more_button"
-        app:layout_constraintStart_toEndOf="@id/netology_logo"
+        app:layout_constraintStart_toEndOf="@id/avatar"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="spread" />
 
@@ -49,9 +49,9 @@
         android:layout_marginStart="@dimen/general_spacing16dp"
         android:text="@string/date"
         android:textSize="30sp"
-        app:layout_constraintBottom_toBottomOf="@+id/netology_logo"
+        app:layout_constraintBottom_toBottomOf="@+id/avatar"
         app:layout_constraintEnd_toStartOf="@+id/more_button"
-        app:layout_constraintStart_toEndOf="@id/netology_logo"
+        app:layout_constraintStart_toEndOf="@id/avatar"
         app:layout_constraintTop_toBottomOf="@id/author" />
 
     <androidx.constraintlayout.widget.Barrier
@@ -59,7 +59,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="bottom"
-        app:constraint_referenced_ids="netology_logo,publish_day" />
+        app:constraint_referenced_ids="avatar,publish_day" />
 
     <TextView
         android:id="@+id/post_content"

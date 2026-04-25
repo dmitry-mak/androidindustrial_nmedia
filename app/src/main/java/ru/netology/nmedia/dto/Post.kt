@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class Post(
     val id: Long,
     val author: String,
+    val authorAvatar: String? = null,
     val content: String,
     val published: Long,
     @SerializedName("likes")

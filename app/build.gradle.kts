@@ -67,6 +67,9 @@ dependencies {
     implementation(libs.play.services)
     coreLibraryDesugaring(libs.desugaring)
 
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation("com.squareup.picasso:picasso:2.71828")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
