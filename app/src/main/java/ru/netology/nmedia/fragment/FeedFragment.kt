@@ -28,7 +28,6 @@ class FeedFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-//        binding = FragmentFeedBinding.inflate(layoutInflater)
         binding = FragmentFeedBinding.inflate(inflater, container, false)
         setupAdapter()
         setupObservers()
@@ -44,7 +43,7 @@ class FeedFragment : Fragment() {
     private fun setupAdapter() {
         adapter = PostAdapter(object : OnInteractionListener {
             override fun onLike(post: Post) {
-                viewModel.like(post.id, post.isLiked)
+                viewModel.like(post.id, post.likedByMe)
             }
 
             override fun onShare(post: Post) {

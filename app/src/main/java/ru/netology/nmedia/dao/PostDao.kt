@@ -22,8 +22,8 @@ interface PostDao {
 
     @Query("""
                 UPDATE PostEntity SET
-                likesCount = likesCount + CASE WHEN isLiked = 1 THEN -1 ELSE 1 END,
-                isLiked = CASE WHEN isLiked = 1 THEN 0 ELSE 1 END
+                likes = likes + CASE WHEN likedByMe = 1 THEN -1 ELSE 1 END,
+                likedByMe = CASE WHEN likedByMe = 1 THEN 0 ELSE 1 END
                 WHERE id = :id;
                 """)
     fun likeById(id: Long)
@@ -31,10 +31,4 @@ interface PostDao {
     @Query("DELETE FROM PostEntity WHERE id = :id")
     fun removeById(id: Long)
 
-    @Query("""
-                UPDATE PostEntity SET
-                sharesCount = sharesCount + 1
-                WHERE id = :id;
-                """)
-    fun share(id: Long)
 }

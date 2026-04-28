@@ -14,9 +14,8 @@ private val empty = Post(
     author = "Netology",
     published = 0L,
     content = "",
-    likesCount = 0,
-    sharesCount = 0,
-    isLiked = false
+    likes = 0,
+    likedByMe = false
 )
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
@@ -25,7 +24,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _data = MutableLiveData(FeedModel())
 
-    //    val data = repository.getData()
     val data: LiveData<FeedModel>
         get() = _data
     val edited = MutableLiveData(empty)
@@ -96,17 +94,18 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         })
     }
 
-    fun save (text: String) {
+    fun save(text: String) {
         edited.value?.let { current ->
-            if(current.content != text) {
+            if (current.content != text) {
                 repository.saveAsync(
                     current.copy(content = text.trim()),
-                    object: PostRepository.PostsCallback<Post>{
+                    object : PostRepository.PostsCallback<Post> {
                         override fun onSuccess(post: Post) {
                             load()
                             edited.postValue(empty)
                             clearDraftPost()
                         }
+
                         override fun onError(e: Throwable) {
                             _data.postValue(FeedModel(error = true))
                         }

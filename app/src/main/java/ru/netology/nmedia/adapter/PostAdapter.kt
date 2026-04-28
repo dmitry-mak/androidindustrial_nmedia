@@ -1,11 +1,8 @@
 package ru.netology.nmedia.adapter
 
-import android.content.Intent
 import android.view.ViewGroup
 import android.view.LayoutInflater
 import androidx.appcompat.widget.PopupMenu
-import androidx.core.net.toUri
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -76,68 +73,46 @@ class PostViewHolder(
                 .into(avatar)
 
 
-        binding.root.setOnClickListener { onInteractionListener.onOpen(post) }
-        postContent.setOnClickListener { onInteractionListener.onOpen(post) }
+            binding.root.setOnClickListener { onInteractionListener.onOpen(post) }
+            postContent.setOnClickListener { onInteractionListener.onOpen(post) }
 
-        likeIcon.isChecked = post.isLiked
-        likeIcon.text = DiffMethods.convertNumber(post.likesCount)
-        likeIcon.setOnClickListener {
-            onInteractionListener.onLike(post)
-        }
-        shareIcon.text = DiffMethods.convertNumber(post.sharesCount)
-        shareIcon.setOnClickListener { onInteractionListener.onShare(post) }
-        moreButton.setOnClickListener {
-            PopupMenu(it.context, it).apply {
-                inflate(R.menu.options_post)
-                setOnMenuItemClickListener { item ->
-                    when (item.itemId) {
-                        R.id.remove -> {
-                            onInteractionListener.onRemove(post)
-                            true
+            likeIcon.isChecked = post.likedByMe
+            likeIcon.text = DiffMethods.convertNumber(post.likes)
+            likeIcon.setOnClickListener {
+                onInteractionListener.onLike(post)
+            }
+            shareIcon.setOnClickListener { onInteractionListener.onShare(post) }
+            moreButton.setOnClickListener {
+                PopupMenu(it.context, it).apply {
+                    inflate(R.menu.options_post)
+                    setOnMenuItemClickListener { item ->
+                        when (item.itemId) {
+                            R.id.remove -> {
+                                onInteractionListener.onRemove(post)
+                                true
+                            }
+
+                            R.id.edit -> {
+                                onInteractionListener.onEdit(post)
+                                true
+                            }
+
+                            else -> false
                         }
-
-                        R.id.edit -> {
-                            onInteractionListener.onEdit(post)
-                            true
-                        }
-
-                        else -> false
                     }
-                }
-            }.show()
-        }
+                }.show()
+            }}}}
 
-        val videoUrl = post.video?.trim().orEmpty()
-        videoContainer.isVisible = videoUrl.isNotBlank()
-        val openVideo: () -> Unit = {
-            if (videoUrl.isNotBlank()) {
-                val intent = Intent(Intent.ACTION_VIEW, videoUrl.toUri())
-                val context = itemView.context
-                if (intent.resolveActivity(context.packageManager) != null) {
-                    context.startActivity(intent)
-                }
+        object PostDiffCallback : DiffUtil.ItemCallback<Post>() {
+
+            override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {
+                return oldItem.id == newItem.id
+            }
+
+            override fun areContentsTheSame(
+                oldItem: Post,
+                newItem: Post
+            ): Boolean {
+                return oldItem == newItem
             }
         }
-        videoContainer.setOnClickListener { openVideo() }
-        videoPreview.setOnClickListener { openVideo() }
-        videoPlay.setOnClickListener { openVideo() }
-    }
-}
-}
-
-object PostDiffCallback : DiffUtil.ItemCallback<Post>() {
-
-    override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {
-        return oldItem.id == newItem.id
-    }
-
-    override fun areContentsTheSame(
-        oldItem: Post,
-        newItem: Post
-    ): Boolean {
-        return oldItem == newItem
-    }
-}
-
-
-

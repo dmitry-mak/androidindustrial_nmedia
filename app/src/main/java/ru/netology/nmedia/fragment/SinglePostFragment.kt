@@ -6,8 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
-import androidx.core.net.toUri
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -52,13 +50,12 @@ class SinglePostFragment : Fragment() {
         b.publishDay.text = DiffMethods.getCurrentDateFormatted(post.published)
         b.postContent.text = post.content
 
-        b.likeIcon.isChecked = post.isLiked
-        b.likeIcon.text = DiffMethods.convertNumber(post.likesCount)
+        b.likeIcon.isChecked = post.likedByMe
+        b.likeIcon.text = DiffMethods.convertNumber(post.likes)
         b.likeIcon.setOnClickListener {
-            viewModel.like(post.id, post.isLiked)
+            viewModel.like(post.id, post.likedByMe)
         }
 
-        b.shareIcon.text = DiffMethods.convertNumber(post.sharesCount)
         b.shareIcon.setOnClickListener {
             viewModel.share(post.id)
             val intent = Intent().apply {
@@ -91,21 +88,6 @@ class SinglePostFragment : Fragment() {
                     }
                 }
             }.show()
-
-            val videoUrl = post.video?.trim().orEmpty()
-            b.videoPreview.isVisible = videoUrl.isNotBlank()
-            val openVideo: () -> Unit = {
-                if (videoUrl.isNotBlank()) {
-                    val intent = Intent(Intent.ACTION_VIEW, videoUrl.toUri())
-                    val context = requireContext()
-                    if (intent.resolveActivity(context.packageManager) != null) {
-                        startActivity(intent)
-                    }
-                }
-            }
-            b.videoPreview.setOnClickListener { openVideo() }
-            b.videoPlay.setOnClickListener { openVideo() }
-            b.videoContainer.setOnClickListener { openVideo() }
         }
     }
 }
