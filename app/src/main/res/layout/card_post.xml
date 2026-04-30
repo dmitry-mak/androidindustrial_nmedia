@@ -72,13 +72,27 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/top_barrier" />
 
+    <ImageView
+        android:id="@+id/attachment_image"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_marginStart="@dimen/general_spacing16dp"
+        android:layout_marginTop="@dimen/general_spacing16dp"
+        android:layout_marginEnd="@dimen/general_spacing16dp"
+        android:contentDescription="Attachment image"
+        android:scaleType="centerCrop"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/post_content"
+        tools:visibility="visible"/>
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/shareIcon"
         style="@style/Widget.Material3.Button.IconButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
-        android:text="0"
         android:textAppearance="@style/TextAppearance.Material3.BodySmall"
         android:textColor="@android:color/black"
         android:textSize="14sp"
@@ -90,7 +104,7 @@
         app:layout_constraintBottom_toBottomOf="@id/likeIcon"
         app:layout_constraintStart_toEndOf="@+id/likeIcon"
         app:layout_constraintTop_toTopOf="@id/likeIcon"
-        tools:text="999" />
+         />
 
     <TextView
         android:id="@+id/viewsCount"
@@ -115,7 +129,7 @@
         android:textStyle="normal"
         app:icon="@drawable/ic_like_selector"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/video_container"
+        app:layout_constraintTop_toBottomOf="@id/attachment_image"
         tools:text="999" />
 
     <ImageView
@@ -137,8 +151,8 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/post_content"
-        tools:visibility="visible">
+        app:layout_constraintTop_toBottomOf="@id/attachment_image"
+        tools:visibility="gone">
         <ImageView
             android:id="@+id/video_preview"
             android:contentDescription="@string/video"

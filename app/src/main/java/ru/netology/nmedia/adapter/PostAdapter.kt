@@ -2,6 +2,7 @@ package ru.netology.nmedia.adapter
 
 import android.view.ViewGroup
 import android.view.LayoutInflater
+import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -11,6 +12,7 @@ import com.bumptech.glide.request.RequestOptions
 import ru.netology.nmedia.DiffMethods
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.R
+import ru.netology.nmedia.dto.AttachmentType
 import ru.netology.nmedia.dto.Post
 
 
@@ -72,6 +74,22 @@ class PostViewHolder(
                 )
                 .into(avatar)
 
+            val attachment =post.attachment
+            if(attachment?.type == AttachmentType.IMAGE) {
+                attachmentImage.visibility = View.VISIBLE
+
+                val attachmentUrl = "${BASE_URL}images/${attachment.url}"
+                Glide.with(attachmentImage.context)
+                    .load(attachmentUrl)
+                    .apply (
+                        RequestOptions()
+                            .timeout(10000)
+                    )
+                    .into(attachmentImage)
+            }else{
+                attachmentImage.visibility= View.GONE
+                Glide.with(attachmentImage.context).clear(attachmentImage)
+            }
 
             binding.root.setOnClickListener { onInteractionListener.onOpen(post) }
             postContent.setOnClickListener { onInteractionListener.onOpen(post) }
