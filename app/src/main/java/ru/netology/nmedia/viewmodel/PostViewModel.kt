@@ -36,7 +36,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     fun load() {
         _data.postValue(FeedModel(loading = true))
-        repository.getAllDataAsync(object : PostRepository.PostsCallback<List<Post>> {
+        repository.getAllDataAsync(object : PostRepository.PostCallback<List<Post>> {
             override fun onSuccess(posts: List<Post>) {
                 _data.postValue(FeedModel(posts = posts, empty = posts.isEmpty()))
             }
@@ -56,7 +56,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun like(id: Long, isLiked: Boolean) {
-        repository.likeAsync(id, isLiked, object : PostRepository.PostsCallback<Post> {
+        repository.likeAsync(id, isLiked, object : PostRepository.PostCallback<Post> {
             override fun onSuccess(post: Post) {
 //                val updatedPost = repository.like(id, isLiked)
                 val currentPosts = _data.value?.posts ?: emptyList()
@@ -83,7 +83,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun removeById(id: Long) {
-        repository.removeByIdAsync(id, object : PostRepository.PostsCallback<Unit> {
+        repository.removeByIdAsync(id, object : PostRepository.PostCallback<Unit> {
             override fun onSuccess(result: Unit) {
                 load()
             }
@@ -99,7 +99,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             if (current.content != text) {
                 repository.saveAsync(
                     current.copy(content = text.trim()),
-                    object : PostRepository.PostsCallback<Post> {
+                    object : PostRepository.PostCallback<Post> {
                         override fun onSuccess(post: Post) {
                             load()
                             edited.postValue(empty)
