@@ -1,31 +1,42 @@
 package ru.netology.nmedia.repository
 
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import ru.netology.nmedia.api.PostApi
 import ru.netology.nmedia.dto.Post
 
-class PostRepositoryImpl() : PostRepository {
+class PostRepositoryImpl : PostRepository {
 
     override fun getAllDataAsync(callback: PostRepository.PostCallback<List<Post>>) {
         PostApi.service.getAllData()
-            .enqueue(object : retrofit2.Callback<List<Post>> {
+            .enqueue(object : Callback<List<Post>> {
                 override fun onResponse(
-                    call: retrofit2.Call<List<Post>>,
-                    response: retrofit2.Response<List<Post>>
+                    call: Call<List<Post>>,
+                    response: Response<List<Post>>
                 ) {
                     if (!response.isSuccessful) {
-                        callback.onError(Exception("error"))
+                        val code = response.code()
+                        val message = response.message()
+                        val body = response.errorBody()?.string()
+//                        callback.onError(Exception("error"))
+                        callback.onError(ApiError(code, message, body))
                         return
                     }
-                    val body = response.body()
-                    if (body == null) {
+//                    val body = response.body()
+//                    if (body == null) {
+//                        callback.onError(RuntimeException("body is null"))
+//                        return
+                    val body = response.body() ?: run {
                         callback.onError(RuntimeException("body is null"))
                         return
                     }
                     callback.onSuccess(body)
                 }
 
-                override fun onFailure(call: retrofit2.Call<List<Post>>, t: Throwable) {
-                    callback.onError(Exception("error"))
+                override fun onFailure(call: Call<List<Post>>, t: Throwable) {
+//                    callback.onError(Exception("error"))
+                    callback.onError(t)
                 }
             })
     }
@@ -40,28 +51,34 @@ class PostRepositoryImpl() : PostRepository {
         } else {
             PostApi.service.likeById(id)
         }
-        call.enqueue(object : retrofit2.Callback<Post> {
+        call.enqueue(object : Callback<Post> {
             override fun onResponse(
-                call: retrofit2.Call<Post>,
-                response: retrofit2.Response<Post>
+                call: Call<Post>,
+                response: Response<Post>
             ) {
                 if (!response.isSuccessful) {
-                    callback.onError(Exception("error"))
+                    val errorCode = response.code()
+                    val errorMessage = response.message()
+                    val errorBody = response.errorBody()?.string()
+
+                    callback.onError(ApiError(errorCode, errorMessage, errorBody))
+//                    callback.onError(Exception("error"))
                     return
                 }
                 val body = response.body()
                 if (body == null) {
-                    callback.onError(Exception("body is null"))
+                    callback.onError(RuntimeException("body is null"))
                     return
                 }
                 callback.onSuccess(body)
             }
 
             override fun onFailure(
-                call: retrofit2.Call<Post>,
+                call: Call<Post>,
                 t: Throwable
             ) {
-                callback.onError(Exception("error"))
+//                callback.onError(Exception("error"))
+                callback.onError(t)
             }
 
         })
@@ -73,10 +90,10 @@ class PostRepositoryImpl() : PostRepository {
         callBack: PostRepository.PostCallback<Unit>
     ) {
         PostApi.service.deleteById(id)
-            .enqueue(object : retrofit2.Callback<Unit> {
+            .enqueue(object : Callback<Unit> {
                 override fun onResponse(
-                    call: retrofit2.Call<Unit>,
-                    response: retrofit2.Response<Unit>
+                    call: Call<Unit>,
+                    response: Response<Unit>
                 ) {
                     if (!response.isSuccessful) {
                         callBack.onError(Exception("error"))
@@ -85,7 +102,7 @@ class PostRepositoryImpl() : PostRepository {
                     callBack.onSuccess(Unit)
                 }
 
-                override fun onFailure(call: retrofit2.Call<Unit>, t: Throwable) {
+                override fun onFailure(call: Call<Unit>, t: Throwable) {
                     callBack.onError(Exception("error"))
                 }
             })
@@ -93,10 +110,10 @@ class PostRepositoryImpl() : PostRepository {
 
     override fun saveAsync(post: Post, callback: PostRepository.PostCallback<Post>) {
         PostApi.service.save(post)
-            .enqueue(object : retrofit2.Callback<Post> {
+            .enqueue(object : Callback<Post> {
                 override fun onResponse(
-                    call: retrofit2.Call<Post>,
-                    response: retrofit2.Response<Post>
+                    call: Call<Post>,
+                    response: Response<Post>
                 ) {
                     if (!response.isSuccessful) {
                         callback.onError(Exception("error"))
@@ -111,7 +128,7 @@ class PostRepositoryImpl() : PostRepository {
                 }
 
                 override fun onFailure(
-                    call: retrofit2.Call<Post>,
+                    call: Call<Post>,
                     t: Throwable
                 ) {
                     callback.onError(Exception("error"))
@@ -119,8 +136,13 @@ class PostRepositoryImpl() : PostRepository {
             })
     }
 
-
     override fun share(id: Long) {
     }
 }
 
+
+data class ApiError(
+    val code: Int,
+    val httpMessage: String,
+    val body: String? = null
+) : Exception("HTTP $code: $httpMessage")
