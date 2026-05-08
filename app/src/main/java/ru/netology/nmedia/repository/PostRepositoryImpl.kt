@@ -62,7 +62,6 @@ class PostRepositoryImpl : PostRepository {
                     val errorBody = response.errorBody()?.string()
 
                     callback.onError(ApiError(errorCode, errorMessage, errorBody))
-//                    callback.onError(Exception("error"))
                     return
                 }
                 val body = response.body()
@@ -77,7 +76,6 @@ class PostRepositoryImpl : PostRepository {
                 call: Call<Post>,
                 t: Throwable
             ) {
-//                callback.onError(Exception("error"))
                 callback.onError(t)
             }
 
@@ -96,14 +94,17 @@ class PostRepositoryImpl : PostRepository {
                     response: Response<Unit>
                 ) {
                     if (!response.isSuccessful) {
-                        callBack.onError(Exception("error"))
+                        val code = response.code()
+                        val message = response.message()
+                        val body = response.errorBody()?.string()
+                        callBack.onError(ApiError(code,message,body))
                         return
                     }
                     callBack.onSuccess(Unit)
                 }
 
                 override fun onFailure(call: Call<Unit>, t: Throwable) {
-                    callBack.onError(Exception("error"))
+                    callBack.onError(t)
                 }
             })
     }
@@ -116,7 +117,10 @@ class PostRepositoryImpl : PostRepository {
                     response: Response<Post>
                 ) {
                     if (!response.isSuccessful) {
-                        callback.onError(Exception("error"))
+                        val code = response.code()
+                        val message = response.message()
+                        val body = response.errorBody()?.string()
+                        callback.onError(ApiError(code,message,body))
                         return
                     }
                     val body = response.body()
@@ -131,7 +135,7 @@ class PostRepositoryImpl : PostRepository {
                     call: Call<Post>,
                     t: Throwable
                 ) {
-                    callback.onError(Exception("error"))
+                    callback.onError(t)
                 }
             })
     }

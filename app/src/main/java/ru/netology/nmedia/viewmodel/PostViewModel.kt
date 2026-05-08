@@ -59,7 +59,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         lastRetryAction = { like(id, isLiked) }
         repository.likeAsync(id, isLiked, object : PostRepository.PostCallback<Post> {
             override fun onSuccess(post: Post) {
-//                val updatedPost = repository.like(id, isLiked)
                 val currentPosts = _data.value?.posts ?: emptyList()
                 val updatedPosts = currentPosts.map { currentPost ->
                     if (currentPost.id == post.id) post else currentPost
@@ -73,7 +72,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             }
 
             override fun onError(e: Throwable) {
-//                _data.postValue(FeedModel(error = true))
                 handleError(e)
             }
 
@@ -85,13 +83,14 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun removeById(id: Long) {
+        lastRetryAction = { removeById(id) }
         repository.removeByIdAsync(id, object : PostRepository.PostCallback<Unit> {
             override fun onSuccess(result: Unit) {
                 load()
             }
 
             override fun onError(e: Throwable) {
-                _data.postValue(FeedModel(error = true))
+            handleError(e)
             }
         })
     }
@@ -99,6 +98,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun save(text: String) {
         edited.value?.let { current ->
             if (current.content != text) {
+                lastRetryAction = { save(text) }
                 repository.saveAsync(
                     current.copy(content = text.trim()),
                     object : PostRepository.PostCallback<Post> {
@@ -109,7 +109,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                         }
 
                         override fun onError(e: Throwable) {
-                            _data.postValue(FeedModel(error = true))
+                        handleError(e)
                         }
                     }
                 )
@@ -135,6 +135,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun handleError(e: Throwable) {
         val message = when (e) {
             is ApiError -> when (e.code) {
+                in 300 ..309 -> "Ошибка редиректа"
                 400 -> "Неверный формат"
                 401 -> "Текст для ошибки 401"
                 404 -> "Ресурс не найден"
